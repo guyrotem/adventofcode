@@ -9,7 +9,7 @@ object Day8 extends App {
   val numberOfLayers = input.length / imageSize
   val Transparent = 2
 
-  val layers = input.toSeq.grouped(imageSize).map(_.unwrap.split("").map(_.toInt)).toList
+  val layers = parseInput(input)
 
   val count = layers.map(l =>
     (l.count(_ == 0), l.count(_ == 1), l.count(_ == 2))
@@ -21,7 +21,7 @@ object Day8 extends App {
 
   println(res)  //  2080
 
-  val decoded = decodeImage(layers)
+  val decoded = decodeLayers(layers)
 
   val output = drawImage(decoded)
 
@@ -29,7 +29,11 @@ object Day8 extends App {
     println(output(i))
   }
 
-  private def decodeImage(imageLayers: List[Array[Int]]) = {
+  private def parseInput(input: String) = {
+    input.toSeq.grouped(imageSize).map(_.unwrap.split("").map(_.toInt)).toList
+  }
+
+  private def decodeLayers(imageLayers: List[Array[Int]]) = {
     assert(imageLayers.forall(_.length == imageSize)) //  actually, imageSize = imageLayers.map(_.length).distinct.onlyValueOrError
     (0 until imageSize).map { pixelIndex =>
       imageLayers.map { layer =>
