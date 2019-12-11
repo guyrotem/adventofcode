@@ -1,6 +1,6 @@
 function runSequential(code, phases) {
 
-    const machines = phases.map(phase => new StatefulProgram([...code], phase));
+    const machines = phases.map(phase => new StatefulProgram([...code], [phase]));
 
     let prevResult;
     let result = 0;

@@ -12,8 +12,8 @@ function IntCodeMachine() {
             write(code, paramsIndices[2], read(code, paramsIndices[0]) * read(code, paramsIndices[1]));
             return instructionPointer + 4;
         } else if (action.opCode === 3) {
-            let paramsIndices = calcParams(code, instructionPointer, action.modes, 1, data);
             if (data.inputs.length <= 0) throw 'no inputs left at ptr ' + instructionPointer;
+            let paramsIndices = calcParams(code, instructionPointer, action.modes, 1, data);
             write(code, paramsIndices[0], data.inputs.shift());
             return instructionPointer + 2;
         } else if (action.opCode === 4) {
@@ -88,41 +88,60 @@ function IntCodeMachine() {
         };
     }
 
-    function runProgram(code, ...inputs) {
-        let instructionPointer = 0;
-        const data = {inputs: inputs, baseOffset: 0, output: []};
-
-        while (instructionPointer >= 0) {
-            instructionPointer = runOpCode(code, instructionPointer, data);
-        }
-        return {code: code, output: data.output};
+    function nextInstruction(code, instructionPointer) {
+        return parseInstruction(code[instructionPointer])
     }
 
     return {
-        runProgram,
-        runOpCode
+        runOpCode,
+        nextInstruction
     }
 }
 
 class StatefulProgram {
 
-    constructor(code, phase) {
+    constructor(code, initialInputs = []) {
         this.code = code;
         this.instructionPointer = 0;
-        this.inputs = [phase];
-        this.runOpCode = IntCodeMachine().runOpCode
+        this.unreadInputs = initialInputs;
+        this.machine = IntCodeMachine();
+        this.baseOffset = 0;
+        this.outputs = [];
     }
 
-    runUntilOutputOrHalt(inputs) {
-        const data = {inputs: [...this.inputs, ...inputs], output: null};
+    runUntilOutputOrHalt(inputs = []) {
+        return this.run(inputs, true, false);
+    }
+
+    runUntilIO(inputs = []) {
+        return this.run(inputs, true, true);
+    }
+
+    runProgram(inputs = []) {
+        return this.run(inputs, false, false);
+    }
+
+    run(inputs, stopOnOutput, stopOnMissingInput) {
+        const data = {inputs: [...this.unreadInputs, ...inputs], baseOffset: this.baseOffset, output: []};
+        let inputNeeded = false;
 
         while (this.instructionPointer >= 0) {
-            this.instructionPointer = this.runOpCode(this.code, this.instructionPointer, data);
-            if (data.output !== null) {
+            if (stopOnMissingInput && this.machine.nextInstruction(this.code, this.instructionPointer).opCode === 3 && this.unreadInputs.length === 0) {
+                inputNeeded = true;
+                break;
+            }
+
+            this.instructionPointer = this.machine.runOpCode(this.code, this.instructionPointer, data);
+
+            if (stopOnOutput && data.output.length > 0) {
                 break;
             }
         }
-        this.inputs = data.inputs;
-        return {code: this.code, output: data.output};
+        //  save state
+        this.unreadInputs = data.inputs;
+        this.outputs = [...this.outputs, ...data.output];
+        this.baseOffset = data.baseOffset;
+
+        return {code: this.code, output: data.output, halt: this.instructionPointer < 0, inputNeeded: inputNeeded};
     }
 }
