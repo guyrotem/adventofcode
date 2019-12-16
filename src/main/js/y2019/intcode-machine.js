@@ -107,6 +107,7 @@ class StatefulProgram {
         this.machine = IntCodeMachine();
         this.baseOffset = 0;
         this.outputs = [];
+        this.halt = false;
     }
 
     runUntilOutputOrHalt(inputs = []) {
@@ -121,12 +122,16 @@ class StatefulProgram {
         return this.run(inputs, false, false);
     }
 
+    runUntilMoreInput(inputs = []) {
+        return this.run(inputs, false, true);
+    }
+
     run(inputs, stopOnOutput, stopOnMissingInput) {
         const data = {inputs: [...this.unreadInputs, ...inputs], baseOffset: this.baseOffset, output: []};
         let inputNeeded = false;
 
         while (this.instructionPointer >= 0) {
-            if (stopOnMissingInput && this.machine.nextInstruction(this.code, this.instructionPointer).opCode === 3 && this.unreadInputs.length === 0) {
+            if (stopOnMissingInput && data.inputs.length === 0 && this.machine.nextInstruction(this.code, this.instructionPointer).opCode === 3) {
                 inputNeeded = true;
                 break;
             }
@@ -141,7 +146,8 @@ class StatefulProgram {
         this.unreadInputs = data.inputs;
         this.outputs = [...this.outputs, ...data.output];
         this.baseOffset = data.baseOffset;
+        this.halt = this.instructionPointer < 0;
 
-        return {code: this.code, output: data.output, halt: this.instructionPointer < 0, inputNeeded: inputNeeded};
+        return {code: this.code, output: data.output, halt: this.halt, inputNeeded: inputNeeded};
     }
 }
