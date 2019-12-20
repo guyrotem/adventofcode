@@ -100,8 +100,8 @@ function IntCodeMachine() {
 
 class StatefulProgram {
 
-    constructor(code, initialInputs = []) {
-        this.code = code;
+    constructor(initialMemory, initialInputs = []) {
+        this.memory = initialMemory;
         this.instructionPointer = 0;
         this.unreadInputs = initialInputs;
         this.machine = IntCodeMachine();
@@ -131,12 +131,12 @@ class StatefulProgram {
         let inputNeeded = false;
 
         while (this.instructionPointer >= 0) {
-            if (stopOnMissingInput && data.inputs.length === 0 && this.machine.nextInstruction(this.code, this.instructionPointer).opCode === 3) {
+            if (stopOnMissingInput && data.inputs.length === 0 && this.machine.nextInstruction(this.memory, this.instructionPointer).opCode === 3) {
                 inputNeeded = true;
                 break;
             }
 
-            this.instructionPointer = this.machine.runOpCode(this.code, this.instructionPointer, data);
+            this.instructionPointer = this.machine.runOpCode(this.memory, this.instructionPointer, data);
 
             if (stopOnOutput && data.output.length > 0) {
                 break;
@@ -148,6 +148,6 @@ class StatefulProgram {
         this.baseOffset = data.baseOffset;
         this.halt = this.instructionPointer < 0;
 
-        return {code: this.code, output: data.output, halt: this.halt, inputNeeded: inputNeeded};
+        return {code: this.memory, output: data.output, halt: this.halt, inputNeeded: inputNeeded};
     }
 }
