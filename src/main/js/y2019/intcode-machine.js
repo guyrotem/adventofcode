@@ -101,7 +101,7 @@ function IntCodeMachine() {
 class StatefulProgram {
 
     constructor(initialMemory, initialInputs = []) {
-        this.memory = initialMemory;
+        this.memory = initialMemory.slice();
         this.instructionPointer = 0;
         this.unreadInputs = initialInputs;
         this.machine = IntCodeMachine();
@@ -150,4 +150,5 @@ class StatefulProgram {
 
         return {code: this.memory, output: data.output, halt: this.halt, inputNeeded: inputNeeded};
     }
+
 }
