@@ -1,5 +1,5 @@
 
-function IntCodeMachine() {
+function IntCodeUtils() {
     function runOpCode(code, instructionPointer, data) {
         let action = parseInstruction(code[instructionPointer]);
 
@@ -98,13 +98,13 @@ function IntCodeMachine() {
     }
 }
 
-class StatefulProgram {
+class IntCodeMachine {
 
     constructor(initialMemory, initialInputs = []) {
         this.memory = initialMemory.slice();
         this.instructionPointer = 0;
         this.unreadInputs = initialInputs;
-        this.machine = IntCodeMachine();
+        this.utils = IntCodeUtils();
         this.baseOffset = 0;
         this.outputs = [];
         this.halt = false;
@@ -131,12 +131,12 @@ class StatefulProgram {
         let inputNeeded = false;
 
         while (this.instructionPointer >= 0) {
-            if (stopOnMissingInput && data.inputs.length === 0 && this.machine.nextInstruction(this.memory, this.instructionPointer).opCode === 3) {
+            if (stopOnMissingInput && data.inputs.length === 0 && this.utils.nextInstruction(this.memory, this.instructionPointer).opCode === 3) {
                 inputNeeded = true;
                 break;
             }
 
-            this.instructionPointer = this.machine.runOpCode(this.memory, this.instructionPointer, data);
+            this.instructionPointer = this.utils.runOpCode(this.memory, this.instructionPointer, data);
 
             if (stopOnOutput && data.output.length > 0) {
                 break;

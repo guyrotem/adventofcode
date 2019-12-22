@@ -1,7 +1,7 @@
 function runWithInput(code, noun, verb) {
     const codeIJ = [...code];
     codeIJ[1] = noun; codeIJ[2] = verb;
-    return new StatefulProgram(codeIJ).runProgram();
+    return new IntCodeMachine(codeIJ).runProgram();
 }
 
 function solveDay2b(code, requestedOutput) {
@@ -10,7 +10,7 @@ function solveDay2b(code, requestedOutput) {
         for (let verb = 0; verb < 100; verb++) {
             const codeIJ = [...code];
             codeIJ[1] = noun; codeIJ[2] = verb;
-            new StatefulProgram(codeIJ).runProgram();
+            new IntCodeMachine(codeIJ).runProgram();
             if (codeIJ[0] === requestedOutput) {
                 return 100 * noun + verb;
             }

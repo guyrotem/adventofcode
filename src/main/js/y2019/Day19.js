@@ -2,7 +2,7 @@ const code = [109,424,203,1,21101,0,11,0,1106,0,282,21102,1,18,0,1106,0,259,2101
 
 let counter = 0;
 function sampleAt(i, j) {
-    return new StatefulProgram(code.slice()).runProgram([i, j]).output[0];
+    return new IntCodeMachine(code).runProgram([i, j]).output[0];
 }
 
 for (let i = 0; i < 50; i++) {

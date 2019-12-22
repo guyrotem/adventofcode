@@ -54,10 +54,10 @@ const procedureB =
 let inputA = formatInput(procedureA);
 let inputB = formatInput(procedureB);
 
-let outputA = new StatefulProgram(code).runProgram(inputA).output;
+let outputA = new IntCodeMachine(code).runProgram(inputA).output;
 formatOutput(outputA).forEach(x => console.log(x));
 console.log(outputA[outputA.length - 1]);
 
-let outputB = new StatefulProgram(code).runProgram(inputB).output;
+let outputB = new IntCodeMachine(code).runProgram(inputB).output;
 formatOutput(outputB).forEach(x => console.log(x));
 console.log(outputB[outputB.length - 1]);
