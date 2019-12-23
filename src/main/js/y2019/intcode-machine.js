@@ -111,32 +111,44 @@ class IntCodeMachine {
     }
 
     runUntilOutputOrHalt(inputs = []) {
-        return this.run(inputs, true, false);
+        return this.run(inputs, true, {type: 'RUN'});
     }
 
     runUntilIO(inputs = []) {
-        return this.run(inputs, true, true);
+        return this.run(inputs, true, {type: 'STOP'});
     }
 
     runProgram(inputs = []) {
-        return this.run(inputs, false, false);
+        return this.run(inputs, false, {type: 'RUN'});
     }
 
     runUntilMoreInput(inputs = []) {
-        return this.run(inputs, false, true);
+        return this.run(inputs, false, {type: 'STOP'});
     }
 
-    run(inputs, stopOnOutput, stopOnMissingInput) {
+    runOneCommand(inputRetriever) {
+        return this.run([], false, {type: 'PROVIDE', getInput: () => inputRetriever()}, 1)
+    }
+
+    run(inputs, stopOnOutput, missingInputStrategy, iterations) {
         const data = {inputs: [...this.unreadInputs, ...inputs], baseOffset: this.baseOffset, output: []};
         let inputNeeded = false;
 
         while (this.instructionPointer >= 0) {
-            if (stopOnMissingInput && data.inputs.length === 0 && this.utils.nextInstruction(this.memory, this.instructionPointer).opCode === 3) {
-                inputNeeded = true;
-                break;
+            if (data.inputs.length === 0 && this.utils.nextInstruction(this.memory, this.instructionPointer).opCode === 3) {
+                if (missingInputStrategy.type === 'STOP') {
+                    inputNeeded = true;
+                    break;
+                } else if (missingInputStrategy.type === 'PROVIDE') {
+                    data.inputs.push(missingInputStrategy.getInput());
+                }
             }
 
             this.instructionPointer = this.utils.runOpCode(this.memory, this.instructionPointer, data);
+
+            if (--iterations === 0) {
+                break;
+            }
 
             if (stopOnOutput && data.output.length > 0) {
                 break;

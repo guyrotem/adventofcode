@@ -179,7 +179,7 @@ object Day22MathUtils {
     }
     t
     //    for primes, there's a simpler solution:
-    //    expMod(k, k-2, mod)
+    //    expMod(k, mod-2, mod)
   }
 }
 
