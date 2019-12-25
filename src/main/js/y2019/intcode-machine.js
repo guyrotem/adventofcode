@@ -111,7 +111,7 @@ class IntCodeMachine {
     }
 
     runUntilOutputOrHalt(inputs = []) {
-        return this.run(inputs, true, {type: 'RUN'});
+        return this.runUntilIO(inputs);
     }
 
     runUntilIO(inputs = []) {
@@ -119,7 +119,7 @@ class IntCodeMachine {
     }
 
     runProgram(inputs = []) {
-        return this.run(inputs, false, {type: 'RUN'});
+        return this.runUntilMoreInput(inputs);
     }
 
     runUntilMoreInput(inputs = []) {
@@ -127,12 +127,17 @@ class IntCodeMachine {
     }
 
     runOneCommand(inputRetriever) {
-        return this.run([], false, {type: 'PROVIDE', getInput: () => inputRetriever()}, 1)
+        return this.run([], false, {type: 'PROVIDE', getInput: inputRetriever}, 1)
     }
 
-    run(inputs, stopOnOutput, missingInputStrategy, iterations) {
+    runWithStrategy(inputRetriever) {
+        return this.run([], false, {type: 'PROVIDE', getInput: inputRetriever})
+    }
+
+    run(inputs, stopOnOutput, missingInputStrategy, limitIterations) {
         const data = {inputs: [...this.unreadInputs, ...inputs], baseOffset: this.baseOffset, output: []};
         let inputNeeded = false;
+        let outputOffset = 0;
 
         while (this.instructionPointer >= 0) {
             if (data.inputs.length === 0 && this.utils.nextInstruction(this.memory, this.instructionPointer).opCode === 3) {
@@ -140,13 +145,20 @@ class IntCodeMachine {
                     inputNeeded = true;
                     break;
                 } else if (missingInputStrategy.type === 'PROVIDE') {
-                    data.inputs.push(missingInputStrategy.getInput());
+                    let lastData = data.output.slice(outputOffset);
+                    let newInputs = missingInputStrategy.getInput(lastData);
+                    outputOffset = data.output.length;
+                    newInputs.forEach(c => data.inputs.push(c));
+                    if (newInputs.length === 0) {
+                        inputNeeded = true;
+                        break;
+                    }
                 }
             }
 
             this.instructionPointer = this.utils.runOpCode(this.memory, this.instructionPointer, data);
 
-            if (--iterations === 0) {
+            if (--limitIterations === 0) {
                 break;
             }
 

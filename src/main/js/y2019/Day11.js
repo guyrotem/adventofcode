@@ -57,7 +57,7 @@ function startPainting(whiteBlocks = []) {
 }
 
 const modifiedBlocks = Object.keys(startPainting([]));
-console.log(modifiedBlocks.length);
+console.log(modifiedBlocks.length); //2883
 
 const part2output = startPainting([[0, 0]]);
 
@@ -98,4 +98,4 @@ function paintMap(map) {
     canvas.reverse().forEach(row => console.log(row))
 }
 
-paintMap(part2output);
+paintMap(part2output);  //  LEPCPLGZ
