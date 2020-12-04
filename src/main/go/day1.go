@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func main() {
+func day1() {
 	content, err := ReadFile("./inputs/2020/1.txt")
 
 	if err != nil {

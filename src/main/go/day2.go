@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func main() {
+func day2() {
 	content, err := ReadFile("./inputs/2020/2.txt")
 
 	if err != nil {
@@ -78,13 +78,4 @@ func parse2(input string) ([]Row, error) {
 	}
 
 	return ret, nil
-}
-
-func filter(ss []string, test func(string) bool) (ret []string) {
-	for _, s := range ss {
-		if test(s) {
-			ret = append(ret, s)
-		}
-	}
-	return
 }
