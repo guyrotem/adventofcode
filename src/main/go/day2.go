@@ -8,7 +8,7 @@ import (
 )
 
 func day2() {
-	content, err := ReadFile("./inputs/2020/2.txt")
+	content, err := ReadFile("../inputs/2020/2.txt")
 
 	if err != nil {
 		fmt.Println(err)

@@ -7,13 +7,7 @@ import (
 )
 
 func day4() {
-	content, err := ReadFile("./inputs/2020/4.txt")
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	input := *content
+	input := MustReadFile("../inputs/2020/4.txt")
 
 	rows := strings.Split(input, "\n\n")
 
@@ -44,7 +38,7 @@ func splitByNewLineOrComma(r rune) bool {
 
 func validateHeight(height Height) bool {
 	result := false
-	if height.units == in {
+	if height.units == inch {
 		result = numberInRange(height.count, 59, 76)
 	} else if height.units == cm {
 		result = numberInRange(height.count, 150, 193)

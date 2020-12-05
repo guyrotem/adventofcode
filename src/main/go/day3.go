@@ -6,7 +6,7 @@ import (
 )
 
 func day3() {
-	content, err := ReadFile("./inputs/2020/3.txt")
+	content, err := ReadFile("../inputs/2020/3.txt")
 
 	if err != nil {
 		fmt.Println(err)

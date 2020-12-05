@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"path/filepath"
+	"strconv"
 )
 
 func ReadFile(fileName string) (*string, error) {
@@ -17,4 +18,12 @@ func ReadFile(fileName string) (*string, error) {
 	}
 	stringContent := string(content)
 	return &stringContent, nil
+}
+
+func MustReadFile(filename string) string {
+	content, err := ReadFile(filename)
+	if err != nil {
+		panic(`Failed to read file: ` + strconv.Quote(filename) + ` | ` + err.Error())
+	}
+	return *content
 }

@@ -32,8 +32,8 @@ type Height struct {
 type Units string
 
 const (
-	in Units = "in"
-	cm       = "cm"
+	inch Units = "in"
+	cm         = "cm"
 )
 
 type Color string
@@ -82,7 +82,6 @@ func parsePassport(row string) (*Passport, error) {
 	}
 	passport.hcl = hcl
 
-	//ecl := m["ecl"]
 	ecl, err := parseColor(m["ecl"])
 	if err != nil {
 		return nil, err
@@ -92,7 +91,13 @@ func parsePassport(row string) (*Passport, error) {
 	if !exists {
 		return nil, errors.New("pid missing")
 	}
-	cid := m["cid"]
+	cid, exists := m["cid"]
+	var maybeCid *string
+	if exists {
+		maybeCid = &cid
+	} else {
+		maybeCid = nil
+	}
 
 	return &Passport{
 		byr: byr,
@@ -102,19 +107,19 @@ func parsePassport(row string) (*Passport, error) {
 		hcl: hcl,
 		ecl: ecl,
 		pid: pid,
-		cid: &cid,
+		cid: maybeCid,
 	}, nil
 }
 
 func parseColor(colorStr string) (Color, error) {
-	if validateRange(colorStr, []string{"amb", "blu", "brn", "gry", "grn", "hzl", "oth"}) {
+	if contains([]string{"amb", "blu", "brn", "gry", "grn", "hzl", "oth"}, colorStr) {
 		return Color(colorStr), nil
 	} else {
 		return "", errors.New("unknown color")
 	}
 }
 
-func validateRange(query string, opts []string) bool {
+func contains(opts []string, query string) bool {
 	for _, item := range opts {
 		if query == item {
 			return true
