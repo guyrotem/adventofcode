@@ -43,5 +43,22 @@ func day5() {
 		return tickets[a].line*8+tickets[a].seat > tickets[b].line*8+tickets[b].seat
 	})
 
-	fmt.Println(tickets[0])
+	var seatIds []int
+
+	for _, ticket := range tickets {
+		seatIds = append(seatIds, ticket.line*8+ticket.seat)
+	}
+
+	fmt.Println(seatIds[0]) //	813
+
+	fmt.Println(continuityBreakDescending(seatIds)) //	612
+}
+
+func continuityBreakDescending(arr []int) int {
+	for idx, v := range arr {
+		if idx+1 < len(arr) && arr[idx+1] != v-1 {
+			return v - 1
+		}
+	}
+	return -1
 }
