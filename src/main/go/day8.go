@@ -75,7 +75,7 @@ func parse8(input []string) []*Command {
 }
 
 type MachineState struct {
-	pointer      int
+	address      int
 	acc          int
 	loopPointers []int
 }
@@ -93,7 +93,7 @@ func runUntilLoop(commands []*Command) (MachineState, error) {
 				accOnLoopStart = acc
 			} else if loop[0] == cmdPointer {
 				return MachineState{
-					pointer:      cmdPointer,
+					address:      cmdPointer,
 					acc:          accOnLoopStart,
 					loopPointers: loop,
 				}, nil
@@ -115,7 +115,7 @@ func runUntilLoop(commands []*Command) (MachineState, error) {
 	}
 
 	return MachineState{
-		pointer: cmdPointer,
+		address: cmdPointer,
 		acc:     acc,
 	}, nil
 }
