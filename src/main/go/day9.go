@@ -2,18 +2,12 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 )
 
 func day9() {
 	input := strings.Split(MustReadFile("../inputs/2020/9.txt"), "\n")
-	var inputNums []int
-
-	for _, line := range input {
-		v, _ := strconv.ParseInt(line, 10, 32)
-		inputNums = append(inputNums, int(v))
-	}
+	inputNums := parseArrayToInt(input)
 
 	noSumIdx := -1
 
