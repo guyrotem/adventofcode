@@ -20,3 +20,11 @@ func parseArrayToInt(input []string) []int {
 	}
 	return inputNums
 }
+
+func mustParseInt(s string) int {
+	r, err := strconv.ParseInt(s, 10, 32)
+	if err != nil {
+		panic(err)
+	}
+	return int(r)
+}
