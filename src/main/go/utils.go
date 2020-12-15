@@ -28,3 +28,11 @@ func mustParseInt(s string) int {
 	}
 	return int(r)
 }
+
+func mustParseInt64(s string, base int) int64 {
+	r, err := strconv.ParseInt(s, base, 64)
+	if err != nil {
+		panic(err)
+	}
+	return r
+}
