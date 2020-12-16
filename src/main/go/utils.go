@@ -36,3 +36,22 @@ func mustParseInt64(s string, base int) int64 {
 	}
 	return r
 }
+
+//	TODO
+type Permutable interface{}
+
+func permutations(rules [][]Permutable) [][]Permutable {
+	if len(rules) == 0 {
+		return [][]Permutable{{}}
+	}
+	prev := permutations(rules[1:])
+	ret := make([][]Permutable, len(prev)*len(rules[0]))
+
+	for x1, perm := range prev {
+		for x2, item := range rules[0] {
+			ret[x1*len(rules[0])+x2] = append(perm, item)
+		}
+	}
+
+	return ret
+}
